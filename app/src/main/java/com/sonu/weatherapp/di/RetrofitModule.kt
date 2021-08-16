@@ -41,10 +41,12 @@ object RetrofitModule {
     @Provides
     fun provideRetrofit(gson: Gson  , okHttpClient: OkHttpClient): Retrofit.Builder {
         return Retrofit.Builder()
-            .baseUrl("https://api.postalpincode.in/")
+//            .baseUrl("https://api.postalpincode.in/")
+            .baseUrl("https://api.weatherapi.com/")
             .addConverterFactory(GsonConverterFactory.create(gson))
             .client(okHttpClient)
     }
+
 
     @Singleton
     @Provides

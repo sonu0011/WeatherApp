@@ -1,36 +1,81 @@
 package com.sonu.weatherapp.ui.registration
 
+import android.content.Intent
+import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.text.TextUtils
 import android.view.View
+import android.widget.ArrayAdapter
+import android.widget.AutoCompleteTextView
+import android.widget.Toast
 import androidx.activity.viewModels
+import androidx.annotation.RequiresApi
+import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.lifecycle.Observer
+import com.google.android.material.datepicker.MaterialDatePicker
 import com.sonu.weatherapp.R
 import com.sonu.weatherapp.model.DistrictAndState
+import com.sonu.weatherapp.ui.todayweather.TodayWeatherActivity
 import com.sonu.weatherapp.utils.DataState
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.activity_registration.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 
 @AndroidEntryPoint
 class RegistrationActivity : AppCompatActivity() {
     private val registrationViewModel: RegistrationViewModel by viewModels()
 
+    @RequiresApi(Build.VERSION_CODES.JELLY_BEAN_MR1)
     @ExperimentalCoroutinesApi
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        setContentView(R.layout.activity_registration)
+        val items = listOf("Male", "Female")
+        val adapter = ArrayAdapter(this, R.layout.list_item, items)
+        (gender_menu.editText as? AutoCompleteTextView)?.setAdapter(adapter)
+        gender_auto_complete_textView.setText(items[0], false)
+        dob.editText!!.setOnClickListener {
+            val datePicker =
+                MaterialDatePicker.Builder.datePicker()
+                    .setTitleText("Select date")
+                    .setSelection(MaterialDatePicker.todayInUtcMilliseconds())
+                    .build()
+
+            datePicker.show(supportFragmentManager, "DateDialog")
+            datePicker.addOnPositiveButtonClickListener {
+                dob.editText!!.setText(datePicker.headerText)
+            }
+
+
+        }
+
+        btn_reg.setOnClickListener {
+            startActivity(Intent(this, TodayWeatherActivity::class.java))
+        }
 
         subscribeObservers()
-        registrationViewModel.setStateEvent(RegistrationViewModel.MainStateEvent.GetDistrictAndStateEvent)
+        btn_check_pin_code.setOnClickListener {
+            if (TextUtils.isEmpty(pincode.editText!!.text)) {
+                showErrorMessage("Please enter pin code")
+            } else {
+                registrationViewModel.setStateEvent(RegistrationViewModel.MainStateEvent.GetDistrictAndStateEvent)
+            }
+        }
+
     }
 
+    private fun showErrorMessage(s: String) {
+        Toast.makeText(this, s, Toast.LENGTH_SHORT).show()
+    }
+
+    @RequiresApi(Build.VERSION_CODES.JELLY_BEAN_MR1)
     private fun subscribeObservers() {
         registrationViewModel.dataState.observe(this, Observer { dataState ->
             when (dataState) {
                 is DataState.Success<List<DistrictAndState>> -> {
                     displayProgressBar(false)
-                    appendBlogTitles(dataState.data)
+                    fetchStateAndDistrict(dataState.data)
                 }
                 is DataState.Error -> {
                     displayProgressBar(false)
@@ -45,15 +90,26 @@ class RegistrationActivity : AppCompatActivity() {
 
 
     private fun displayError(message: String?) {
-        if (message != null) text.text = message else text.text = "Unknown error."
+
+//        if (message != null) text.text = message else text.text = "Unknown error."
     }
 
-    private fun appendBlogTitles(districtAndStates: List<DistrictAndState>) {
-        val sb = StringBuilder()
+    @RequiresApi(Build.VERSION_CODES.JELLY_BEAN_MR1)
+    private fun fetchStateAndDistrict(districtAndStates: List<DistrictAndState>) {
+        val states = mutableListOf<String>()
+        val districts = mutableListOf<String>()
+        val stateAdapter = ArrayAdapter(this, R.layout.list_item, states)
+        val districtAdapter = ArrayAdapter(this, R.layout.list_item, districts)
+
         for (d in districtAndStates) {
-            sb.append(" District " + d.district + " State " + d.state + "\n")
+            states.add(d.state)
+            districts.add(d.district)
         }
-        text.text = sb.toString()
+        (district_menu.editText as? AutoCompleteTextView)?.setAdapter(districtAdapter)
+        (state_menu.editText as? AutoCompleteTextView)?.setAdapter(stateAdapter)
+        state_auto_complete.setText(states[0], false)
+        district_auto_complete.setText(districts[0], false)
+
     }
 
     private fun displayProgressBar(isDisplayed: Boolean) {

@@ -3,6 +3,7 @@ package com.sonu.weatherapp.repository
 import com.sonu.weatherapp.retrofit.WeatherRetrofit
 import com.sonu.weatherapp.room.WeatherDao
 import com.sonu.weatherapp.utils.CacheMapper
+import com.sonu.weatherapp.utils.Constants
 import com.sonu.weatherapp.utils.DataState
 import com.sonu.weatherapp.utils.NetworkMapper
 import kotlinx.coroutines.flow.flow
@@ -28,6 +29,17 @@ class WeatherRepository(
 
             emit(DataState.Success(cacheMapper.mapFromEntityToDistrictAndState(requiredData)))
 
+        } catch (e: Exception) {
+            emit(DataState.Error(e))
+        }
+    }
+
+    suspend fun getWeatherInfo(cityName: String) = flow {
+        emit(DataState.Loading)
+        try {
+            val weatherInfo =
+                weatherRetrofit.getCurrentDayWeatherInfo(Constants.API_KEY, cityName = cityName)
+            emit(DataState.Success(weatherInfo))
         } catch (e: Exception) {
             emit(DataState.Error(e))
         }

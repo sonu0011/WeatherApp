@@ -11,7 +11,7 @@ interface WeatherRetrofit {
         @Path("pincode") pinCode: String
     ): List<DistrictAndStateNetworkEntity>
 
-    @GET("https://api.weatherapi.com/v1/current.json")
+    @GET("v1/current.json")
     suspend fun getCurrentDayWeatherInfo(
         @Query("key") key: String,
         @Query("q") cityName: String
