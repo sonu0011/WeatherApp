@@ -11,6 +11,7 @@ import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import javax.inject.Named
 import javax.inject.Singleton
 
 @Module
@@ -36,24 +37,41 @@ object RetrofitModule {
     fun provideRetrofitClient(loggingInterceptor: HttpLoggingInterceptor) =
         OkHttpClient.Builder().addInterceptor(loggingInterceptor).build()
 
+    @Singleton
+    @Provides
+    @Named("postalRetrofit")
+    fun provideRetrofit(gson: Gson  , okHttpClient: OkHttpClient): Retrofit.Builder {
+        return Retrofit.Builder()
+            .baseUrl("https://api.postalpincode.in/")
+            .addConverterFactory(GsonConverterFactory.create(gson))
+            .client(okHttpClient)
+    }
 
     @Singleton
     @Provides
-    fun provideRetrofit(gson: Gson  , okHttpClient: OkHttpClient): Retrofit.Builder {
+    @Named("weatherRetrofit")
+    fun provideWeatherRetrofit(gson: Gson  , okHttpClient: OkHttpClient): Retrofit.Builder {
         return Retrofit.Builder()
-//            .baseUrl("https://api.postalpincode.in/")
             .baseUrl("https://api.weatherapi.com/")
             .addConverterFactory(GsonConverterFactory.create(gson))
             .client(okHttpClient)
     }
 
-
     @Singleton
     @Provides
-    fun provideBlogService(retrofit: Retrofit.Builder): WeatherRetrofit {
+    @Named("postalRetrofitInstance")
+    fun providePostalRetrofit(@Named("postalRetrofit") retrofit: Retrofit.Builder): WeatherRetrofit {
         return retrofit
             .build()
             .create(WeatherRetrofit::class.java)
     }
 
+    @Singleton
+    @Provides
+    @Named("weatherRetrofitInstance")
+    fun provideWeatherRetrofitInstance(@Named("weatherRetrofit") retrofit: Retrofit.Builder): WeatherRetrofit {
+        return retrofit
+            .build()
+            .create(WeatherRetrofit::class.java)
+    }
 }

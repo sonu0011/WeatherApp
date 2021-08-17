@@ -7,9 +7,11 @@ import com.sonu.weatherapp.utils.Constants
 import com.sonu.weatherapp.utils.DataState
 import com.sonu.weatherapp.utils.NetworkMapper
 import kotlinx.coroutines.flow.flow
+import javax.inject.Named
 
 class WeatherRepository(
     private val weatherDao: WeatherDao,
+    private val postalRetrofit: WeatherRetrofit,
     private val weatherRetrofit: WeatherRetrofit,
     private val cacheMapper: CacheMapper,
     private val networkMapper: NetworkMapper
@@ -22,12 +24,13 @@ class WeatherRepository(
             val lists =
                 networkMapper.mapFromNetworkEntityList(districtsAndStates.get(0).postOffices)
 
-            for (d in lists) {
-                weatherDao.insert(cacheMapper.mapFromDistrictAndStateToEntity(d))
-            }
-            val requiredData = weatherDao.getDistrictsAndStates()
+//            for (d in lists) {
+//                weatherDao.insert(cacheMapper.mapFromDistrictAndStateToEntity(d))
+//            }
+//            val requiredData = weatherDao.getDistrictsAndStates()
 
-            emit(DataState.Success(cacheMapper.mapFromEntityToDistrictAndState(requiredData)))
+//            emit(DataState.Success(cacheMapper.mapFromEntityToDistrictAndState(requiredData)))
+            emit(DataState.Success(lists))
 
         } catch (e: Exception) {
             emit(DataState.Error(e))
@@ -38,7 +41,7 @@ class WeatherRepository(
         emit(DataState.Loading)
         try {
             val weatherInfo =
-                weatherRetrofit.getCurrentDayWeatherInfo(Constants.API_KEY, cityName = cityName)
+                postalRetrofit.getCurrentDayWeatherInfo(Constants.API_KEY, cityName = cityName)
             emit(DataState.Success(weatherInfo))
         } catch (e: Exception) {
             emit(DataState.Error(e))

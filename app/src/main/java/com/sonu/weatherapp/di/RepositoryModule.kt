@@ -9,6 +9,7 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.components.ApplicationComponent
+import javax.inject.Named
 import javax.inject.Singleton
 
 @Module
@@ -19,10 +20,13 @@ object RepositoryModule {
     @Provides
     fun provideMainRepository(
         weatherDao: WeatherDao,
-        weatherRetrofit: WeatherRetrofit,
+        @Named("postalRetrofitInstance")
+        postalRetrofit: WeatherRetrofit,
+        @Named("weatherRetrofitInstance")
+       weatherInfoRetrofit: WeatherRetrofit,
         cacheMapper: CacheMapper,
         networkMapper: NetworkMapper
     ): WeatherRepository {
-        return WeatherRepository(weatherDao, weatherRetrofit, cacheMapper, networkMapper)
+        return WeatherRepository(weatherDao,  weatherInfoRetrofit, postalRetrofit , cacheMapper, networkMapper)
     }
 }

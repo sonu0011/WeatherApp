@@ -18,7 +18,7 @@ class CurrentDayInfoNetworkEntity(
 
     @SerializedName("temp_f")
     @Expose
-    var temp_f: Int,
+    var temp_f: Double,
 
     @SerializedName("is_day")
     @Expose

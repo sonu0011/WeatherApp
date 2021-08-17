@@ -18,6 +18,7 @@ import com.sonu.weatherapp.R
 import com.sonu.weatherapp.model.DistrictAndState
 import com.sonu.weatherapp.ui.todayweather.TodayWeatherActivity
 import com.sonu.weatherapp.utils.DataState
+import com.sonu.weatherapp.utils.showToast
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.activity_registration.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -51,23 +52,43 @@ class RegistrationActivity : AppCompatActivity() {
         }
 
         btn_reg.setOnClickListener {
+            if (TextUtils.isEmpty(mobile_number.editText!!.text)){
+               showToast("Please enter your mobile number")
+                return@setOnClickListener
+            }
+
+            if (TextUtils.isEmpty(full_name.editText!!.text)){
+                showToast("Please enter your full name")
+                return@setOnClickListener
+            }
+            if (TextUtils.isEmpty(gender_menu.editText!!.text)){
+                showToast("Please select your gender")
+                return@setOnClickListener
+            }
+            if (TextUtils.isEmpty(dob.editText!!.text)){
+                showToast("Please enter the data of birth")
+                return@setOnClickListener
+            }
+
+            if (TextUtils.isEmpty(address_line1.editText!!.text)){
+                showToast("Please enter your address")
+                return@setOnClickListener
+            }
+
             startActivity(Intent(this, TodayWeatherActivity::class.java))
         }
 
         subscribeObservers()
         btn_check_pin_code.setOnClickListener {
             if (TextUtils.isEmpty(pincode.editText!!.text)) {
-                showErrorMessage("Please enter pin code")
+                showToast("Please enter pin code")
             } else {
-                registrationViewModel.setStateEvent(RegistrationViewModel.MainStateEvent.GetDistrictAndStateEvent)
+                registrationViewModel.setStateEvent(RegistrationViewModel.MainStateEvent.GetDistrictAndStateEvent , pincode.editText!!.text.toString())
             }
         }
 
     }
 
-    private fun showErrorMessage(s: String) {
-        Toast.makeText(this, s, Toast.LENGTH_SHORT).show()
-    }
 
     @RequiresApi(Build.VERSION_CODES.JELLY_BEAN_MR1)
     private fun subscribeObservers() {
@@ -79,7 +100,7 @@ class RegistrationActivity : AppCompatActivity() {
                 }
                 is DataState.Error -> {
                     displayProgressBar(false)
-                    displayError(dataState.exception.message)
+                    dataState.exception.message?.let { showToast(it) }
                 }
                 is DataState.Loading -> {
                     displayProgressBar(true)
@@ -88,11 +109,6 @@ class RegistrationActivity : AppCompatActivity() {
         })
     }
 
-
-    private fun displayError(message: String?) {
-
-//        if (message != null) text.text = message else text.text = "Unknown error."
-    }
 
     @RequiresApi(Build.VERSION_CODES.JELLY_BEAN_MR1)
     private fun fetchStateAndDistrict(districtAndStates: List<DistrictAndState>) {

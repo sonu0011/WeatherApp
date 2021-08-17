@@ -46,7 +46,6 @@ class TodayWeatherActivity : AppCompatActivity() {
             when (it) {
                 is DataState.Success<CurrentDayWeatherInfoNetworkEntity> -> {
                     displayProgressBar(false)
-                    Log.d("Today", "subscribeObservers: "+it.data)
                     getCurrentWeatherInfo(it.data)
                 }
                 is DataState.Error -> {
@@ -61,15 +60,15 @@ class TodayWeatherActivity : AppCompatActivity() {
     }
 
     private fun displayError(message: String?) {
-
+        error_text.visibility = View.VISIBLE
         if (message != null) error_text.text = message else error_text.text = "Unknown error."
     }
 
     private fun getCurrentWeatherInfo(data: CurrentDayWeatherInfoNetworkEntity) {
-        temp_celsius.text = "${temp_celsius.text}{${data.current.temp_c}}"
-        temp_Fahrenheit.text = "${temp_Fahrenheit.text}{${data.current.temp_f}}"
-        latitude.text = "${latitude.text}{${data.location.lat}}"
-        longitude.text = "${longitude.text}{${data.location.lon}}"
+        temp_celsius.text = "${temp_celsius.text}${data.current.temp_c}"
+        temp_Fahrenheit.text = "${temp_Fahrenheit.text}${data.current.temp_f}"
+        latitude.text = "${latitude.text}${data.location.lat}"
+        longitude.text = "${longitude.text}${data.location.lon}"
     }
 
     private fun displayProgressBar(isDisplayed: Boolean) {

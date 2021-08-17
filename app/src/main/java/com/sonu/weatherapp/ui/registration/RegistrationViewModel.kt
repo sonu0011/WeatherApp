@@ -24,7 +24,7 @@ class RegistrationViewModel @ViewModelInject constructor(
 
 
     @ExperimentalCoroutinesApi
-    fun setStateEvent(mainStateEvent: MainStateEvent, pinCode: String = "141421") {
+    fun setStateEvent(mainStateEvent: MainStateEvent, pinCode: String) {
         viewModelScope.launch {
             when (mainStateEvent) {
                 is MainStateEvent.GetDistrictAndStateEvent -> {

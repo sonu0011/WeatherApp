@@ -3,7 +3,9 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:layout_marginTop="15dp"
     android:layout_marginLeft="5dp"
+    android:padding="2dp"
     android:layout_marginEnd="5dp"
     android:layout_marginBottom="30dp"
     xmlns:tools="http://schemas.android.com/tools"
@@ -23,7 +25,6 @@
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             android:id="@+id/progress_bar"
-            app:layout_constraintVertical_bias=".2"
             android:visibility="gone"
             />
 
@@ -251,7 +252,7 @@
             app:layout_constraintTop_toBottomOf="@id/state_menu"
             android:layout_width="match_parent"
             android:layout_margin="15dp"
-            android:padding="10dp"
+            android:padding="15dp"
             android:layout_height="wrap_content"
             android:text="@string/Register"/>
 
