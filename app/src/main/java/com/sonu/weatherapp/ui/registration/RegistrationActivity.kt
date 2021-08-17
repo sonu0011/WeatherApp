@@ -39,7 +39,7 @@ class RegistrationActivity : AppCompatActivity() {
         dob.editText!!.setOnClickListener {
             val datePicker =
                 MaterialDatePicker.Builder.datePicker()
-                    .setTitleText("Select date")
+                    .setTitleText("Select Date of birth")
                     .setSelection(MaterialDatePicker.todayInUtcMilliseconds())
                     .build()
 
@@ -52,10 +52,11 @@ class RegistrationActivity : AppCompatActivity() {
         }
 
         btn_reg.setOnClickListener {
-            if (TextUtils.isEmpty(mobile_number.editText!!.text)){
+            if (TextUtils.isEmpty(mobile_number.editText!!.text) || mobile_number.editText!!.text.toString().length < 10){
                showToast("Please enter your mobile number")
                 return@setOnClickListener
             }
+
 
             if (TextUtils.isEmpty(full_name.editText!!.text)){
                 showToast("Please enter your full name")
@@ -66,12 +67,12 @@ class RegistrationActivity : AppCompatActivity() {
                 return@setOnClickListener
             }
             if (TextUtils.isEmpty(dob.editText!!.text)){
-                showToast("Please enter the data of birth")
+                showToast("Please enter your Date of birth")
                 return@setOnClickListener
             }
 
-            if (TextUtils.isEmpty(address_line1.editText!!.text)){
-                showToast("Please enter your address")
+            if (TextUtils.isEmpty(address_line1.editText!!.text) || address_line1.editText!!.text.toString().length <3){
+                showToast("Please enter a valid address")
                 return@setOnClickListener
             }
 
